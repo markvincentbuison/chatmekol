@@ -40,7 +40,7 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
 def get_redirect_uri():
     if IS_PRODUCTION:
         return "https://google-test-signin.onrender.com/callback"
-    return "http://127.0.0.1:5000/callback"  # or your ngrok URL
+    return "https://15a4-112-203-134-9.ngrok-free.app/callback"  # or your ngrok URL
 #--------------------------------------------------------------------------------------------------
 # Login required decorator to ensure user is logged in
 def login_is_required(f):
@@ -50,7 +50,6 @@ def login_is_required(f):
             return abort(401)  # Unauthorized if user is not logged in
         return f(*args, **kwargs)
     return decorated_function
-
 #--------------------------------------------------------------------------------------------------
 # Google OAuth Login route
 from flask import make_response
