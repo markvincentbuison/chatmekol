@@ -7,28 +7,31 @@ from google.auth.transport.requests import Request
 from dotenv import load_dotenv
 from functools import wraps
 #--------------------------------------------------------------------------------------------------
-    # This Import is for Templates
+# This Import is for Templates
 from flask import render_template
-# =====this below for for render connecting 24/7=====================
-import threading
-import time
-import requests
-# ==========================
 
 #---------------------------------------------------------------------------------------------------
 # Load environment variables from .env file
 load_dotenv()
 
-# Define CLIENT_SECRETS_FILE globally
-CLIENT_SECRETS_FILE = os.path.join(
-    pathlib.Path(__file__).parent.parent.parent, 'certs', 'client_secret.json'
-)
+# Define CLIENT_SECRETS_FILE globally by using a helper function
+def get_client_secrets_file():
+    host = request.host
+    if "127.0.0.1" in host or "localhost" in host or "192.168." in host or "ngrok" in host:
+        return os.path.join(
+            pathlib.Path(__file__).parent.parent.parent, 'certs', 'client_secret_dev.json'
+        )
+    else:
+        return os.path.join(
+            pathlib.Path(__file__).parent.parent.parent, 'certs', 'client_secret_prod.json'
+        )
 
 # Blueprint setup for Google OAuth routes
 google_bp = Blueprint('google_bp', __name__)
 
 # Load Google OAuth Client ID from environment
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
+
 #--------------------------------------------------------------------------------------------------
 # Get the redirect URI. Always use the Render callback URL for production.
 def get_redirect_uri():
@@ -37,7 +40,6 @@ def get_redirect_uri():
         # When testing locally, return the localhost URL
         return "https://127.0.0.1:5000/callback"  # Change to ngrok URL if using ngrok
     return "https://google-test-signin.onrender.com/callback"  # Your production callback URL
-
 
 #--------------------------------------------------------------------------------------------------
 # Login required decorator to ensure user is logged in
@@ -51,7 +53,6 @@ def login_is_required(f):
 
 #--------------------------------------------------------------------------------------------------
 # Google OAuth Login route
-
 @google_bp.route("/login")
 def login():
     # Replace with your actual deployed URL
@@ -66,7 +67,7 @@ def login():
     print(f"Redirect URI being used: {redirect_uri}")
     
     flow = Flow.from_client_secrets_file(
-        client_secrets_file=CLIENT_SECRETS_FILE,
+        client_secrets_file=get_client_secrets_file(),  # Use the helper function here
         scopes=[
             "https://www.googleapis.com/auth/userinfo.profile",
             "https://www.googleapis.com/auth/userinfo.email",
@@ -98,7 +99,7 @@ def callback():
     try:
         # Initialize the OAuth flow using the provided client secrets and redirect URI
         flow = Flow.from_client_secrets_file(
-            client_secrets_file=CLIENT_SECRETS_FILE,
+            client_secrets_file=get_client_secrets_file(),  # Use the helper function here
             scopes=[
                 "https://www.googleapis.com/auth/userinfo.profile",
                 "https://www.googleapis.com/auth/userinfo.email",
@@ -149,6 +150,7 @@ def logout():
 def index():
     print("Index route is being accessed")
     return render_template("index.html")
+
 #--------------------------------------------------------------------------------------------------
 # Protected area route (for logged-in users)
 @google_bp.route("/dashboard")
@@ -159,18 +161,5 @@ def dashboard():
     picture = session.get("picture")
 
     return render_template("dashboard.html", name=name, email=email, picture=picture)
-#--------------------------------------------------------------------------------------------------
-#======================================================================================================================
-# ===================== 24/7 Render Keep-Alive ==========================
-def ping_self():
-    while True:
-        try:
-            time.sleep(1200)  # every 20 minutes
-            requests.get("https://downloadable-system.onrender.com/")
-        except Exception as e:
-            print(f"[Keep-Alive Ping Error] {e}")
 
-keep_alive_thread = threading.Thread(target=ping_self)
-keep_alive_thread.daemon = True
-keep_alive_thread.start()
-#======================================================================================================================
+#--------------------------------------------------------------------------------------------------
