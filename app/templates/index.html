@@ -2,100 +2,228 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Google OAuth Login</title>
+  <title>Buison Chat Vibes</title>
+
+  <!-- Bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
-  <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet" />
+
+  <!-- Clean Modern Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}"/>
 
   <!-- Particles.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
   <style>
-    /* Custom style for modal text */
-    .modal-body p {
-      color: black;  /* Set the text color to black */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      color: #333;
+      background-color: #000;
+      background-image: url('{{ url_for("static", filename="background/bp.jpg") }}'); /* 
+      background-size: cover; /* Make the background image cover the full screen */
+      background-position: center; /* Center the background image */
+      background-repeat: no-repeat; /* Prevent the background image from repeating */
+      background-attachment: fixed; /* Keep the background fixed while scrolling */
+      overflow: hidden;
+    }
+    
+
+    /* Fullscreen container for particles */
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
     }
 
-    .details-text {
-      font-size: 1rem;
-      color: black;
-      text-align: center;
-      margin-top: 10px;
+    .neon-box {
+      position: relative;
+      max-width: 420px;
+      margin: auto;
+      padding: 2rem;
+      margin-top: 12vh;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     }
 
-    .contact-info {
-      font-size: 1rem;
-      color: black;
-      text-align: center;
-      margin-top: 15px;
+    h1 {
+      color: #333;
+      font-weight: 500;
     }
 
-    .contact-info a {
+    .btn-neon {
+      background: transparent;
+      border: 2px solid #007bff;
+      color: #007bff;
+      font-weight: 500;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .btn-neon:hover {
+      background: #007bff;
+      color: #fff;
+      box-shadow: 0 0 10px #007bff, 0 0 20px #007bff;
+    }
+
+    /* Google Button */
+    .btn-google {
+      background-color: #db4437;
+      border-color: #db4437;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .btn-google:hover {
+      background-color: #c1351d;
+      border-color: #c1351d;
+      color: white;
+      box-shadow: 0 0 10px #db4437, 0 0 20px #db4437;
+    }
+
+    /* Facebook Button */
+    .btn-facebook {
+      background-color: #3b5998;
+      border-color: #3b5998;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .btn-facebook:hover {
+      background-color: #2d4373;
+      border-color: #2d4373;
+      color: white;
+      box-shadow: 0 0 10px #3b5998, 0 0 20px #3b5998;
+    }
+
+    .text-neon {
+      color: #007bff;
+    }
+
+    .neon-input {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid #007bff;
+      color: #333;
+      border-radius: 0.5rem;
+    }
+
+    .neon-input::placeholder {
+      color: #333;
+      opacity: 0.6;
+    }
+
+    .neon-input:focus {
+      box-shadow: 0 0 10px #007bff;
+      outline: none;
+    }
+
+    .d-flex a {
       color: #007bff;
       text-decoration: none;
     }
 
-    .contact-info a:hover {
+    .d-flex a:hover {
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
-  <!-- Particles background -->
+  <!-- Particles Container -->
   <div id="particles-js"></div>
 
-  <!-- Main Content -->
+  <!-- Login Box -->
   <div class="neon-box text-center">
-    <h1>Welcome to the Google OAuth App</h1>
+    <h1>Welcome to <span class="text-neon">BuisonChatVibes</span></h1>
 
-    <!-- Google Login Button -->
-    <a href="/login"><button class="btn btn-neon">Login with Google</button></a>
+    <!-- Login Form -->
+    <form action="/login_user" method="POST" class="mt-3">
+      <input type="text" name="username" class="form-control neon-input my-2" placeholder="Username" required>
+      <input type="password" name="password" class="form-control neon-input my-2" placeholder="Password" required>
+      <button type="submit" class="btn btn-neon w-100 my-2">Login</button>
+    </form>
 
-    <!-- Modal trigger button -->
-    <button class="btn btn-link my-3" data-bs-toggle="modal" data-bs-target="#developerModal">About the Developer</button>
-  </div>
-
-  <!-- Modal: Developer Info -->
-  <div class="modal fade" id="developerModal" tabindex="-1" aria-labelledby="developerModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="developerModalLabel">Developer Information</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>This project was developed by:</p>
-          <p><strong>Mark Vincent DELOS SANTOS Buison</strong></p>
-          <!-- App Description inside the modal -->
-          <p class="details-text">
-            This application allows you to sign in easily using your Google account.
-            <br>
-            Enjoy seamless authentication and secure access to our services.
-          </p>
-          <!-- GitHub link -->
-          <p class="details-text">
-            GitHub Repository: <a href="https://github.com/markvincentbuison/Google-Test-Signin" target="_blank">Google Test Signin</a>
-          </p>
-          <!-- Freelance Info -->
-          <p class="contact-info">
-            I'm a new freelance web developer and I'm available for any projects.
-            <br>
-            You can contact me via email: <a href="mailto:markvincentbuison@gmail.com">markvincentbuison@gmail.com</a>
-          </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
+    <!-- Links -->
+    <div class="d-flex justify-content-between my-2 px-1">
+      <a href="/forgot-password" class="text-neon">Forgot Password?</a>
+      <a href="/signup" class="text-neon">Create Account</a>
     </div>
+
+    <!-- Social Login Buttons -->
+    <a href="/login" class="btn btn-google w-100 my-2"><i class="fab fa-google me-2"></i>Login with Google</a>
+    <a href="/login/facebook" class="btn btn-facebook w-100 my-2"><i class="fab fa-facebook me-2"></i>Login with Facebook</a>
   </div>
 
-  <!-- JavaScript Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
-  <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+  <!-- Particles.js Configuration -->
+  <script>
+    particlesJS('particles-js', {
+      particles: {
+        number: {
+          value: 100,
+          density: {
+            enable: true,
+            value_area: 800
+          }
+        },
+        shape: {
+          type: "image",
+          image: {
+            src: "{{ url_for('static', filename='background/bp.jpg') }}",  
+            width: 30,  /* Image size */
+            height: 30  /* Image size */
+          }
+        },
+        move: {
+          enable: true,
+          speed: 3,  /* Adjust the speed for smoother movement */
+          direction: "random",  /* Random direction for particles */
+          random: true,
+          straight: false,
+          out_mode: "out"
+        },
+        opacity: {
+          value: 0.7,
+          random: true,
+          anim: {
+            enable: true,
+            speed: 1,
+            opacity_min: 0.3,
+            sync: false
+          }
+        },
+        size: {
+          value: 10,
+          random: true,
+          anim: {
+            enable: true,
+            speed: 4,
+            size_min: 0.1,
+            sync: false
+          }
+        }
+      },
+      interactivity: {
+        events: {
+          onhover: {
+            enable: true,
+            mode: "repulse"
+          },
+          onclick: {
+            enable: true,
+            mode: "push"
+          }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
 
 </body>
 </html>
