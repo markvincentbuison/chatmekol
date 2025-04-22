@@ -95,3 +95,19 @@
     margin-top: 5px;
     margin-bottom: 10px;
 }
+.glass-input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px;
+}
+.glass-input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+    box-shadow: 0 0 10px #00f0ff;
+    color: #fff;
+}
+.neon-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
