@@ -1,20 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>User Dashboard</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet" />
-  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS for Neon/Glassmorphism Effects -->
+    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}"/>
+    
+  
 </head>
+
 <body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+           
+            <div class="col-md-3 bg-dark text-white p-4 sidebar-glass">
+              <h4 class="text-center mb-4 neon-text">⚡ Dashboard</h4>
+          
+              <div class="d-flex flex-column gap-2">
+                  <a href="/dashboard" class="btn btn-sidebar">
+                      <i class="fas fa-home mr-2"></i> Home
+                  </a>
+          
+                  <button class="btn btn-sidebar d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#manageUsersCollapse">
+                      <span><i class="fas fa-users-cog mr-2"></i> Manage Users</span>
+                      <i class="fas fa-chevron-down"></i>
+                  </button>
+                  <div id="manageUsersCollapse" class="collapse sub-btn-group">
+                      <a href="/manage-users/view" class="btn btn-sub">View Users</a>
+                      <a href="/manage-users/add" class="btn btn-sub">Add User</a>
+                  </div>
+          
+                  <button class="btn btn-sidebar d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#statsCollapse">
+                      <span><i class="fas fa-chart-line mr-2"></i> View Stats</span>
+                      <i class="fas fa-chevron-down"></i>
+                  </button>
+                  <div id="statsCollapse" class="collapse sub-btn-group">
+                      <a href="/view-stats/daily" class="btn btn-sub">Daily Stats</a>
+                      <a href="/view-stats/monthly" class="btn btn-sub">Monthly Stats</a>
+                  </div>
+          
+                  <button class="btn btn-sidebar d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#settingsCollapse">
+                      <span><i class="fas fa-cogs mr-2"></i> System Settings</span>
+                      <i class="fas fa-chevron-down"></i>
+                  </button>
+                  <div id="settingsCollapse" class="collapse sub-btn-group">
+                      <a href="/system-settings/security" class="btn btn-sub">Security</a>
+                      <a href="/system-settings/network" class="btn btn-sub">Network</a>
+                  </div>
+          
+                  <a href="/logout" class="btn btn-sidebar">
+                      <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                  </a>
+              </div>
+          </div>
+          
 
-  <div class="dashboard-box">
-    <img src="{{ picture }}" alt="Profile Picture">
-    <h2>Welcome tae, {{ name }}!</h2>
-    <p>Email: {{ email }}</p>
-    <a href="/logout" class="btn btn-neon">Logout</a>
-  </div>
+          
 
+            <!-- Main Content -->
+            <div class="col-md-9 p-4">
+                <div class="row">
+                    <!-- User Profile Card -->
+                    <div class="col-md-4 mb-3">
+                      <div class="card bg-glassmorphism shadow-lg text-center p-4">
+                          <div class="profile-img-wrapper mx-auto mb-3">
+                              <img src="{{ picture }}" alt="User Picture"
+                                   class="rounded-circle img-fluid shadow"
+                                   style="width: 130px; height: 130px; object-fit: cover; border: 3px solid #fff;">
+                          </div>
+                          <div class="card-body">
+                              <h5 class="text-white mb-1">{{ name }}</h5>
+                              <p class="text-muted mb-3">{{ email }}</p>
+                              <button class="btn btn-neon btn-block" data-toggle="modal" data-target="#editUserModal">
+                                  Edit Profile
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+                    <!-- Dashboard Panels -->
+                    <div class="col-md-8">
+                        <div class="row">
+                            <!-- Manage User Panel -->
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-glassmorphism shadow-lg">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Manage Users</h5>
+                                        <p class="card-text">View and manage system users.</p>
+                                        <a href="/manage-users" class="btn btn-neon w-100" data-toggle="modal" data-target="#manageUsersModal">Go to Manage Users</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- View Stats Panel -->
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-glassmorphism shadow-lg">
+                                    <div class="card-body">
+                                        <h5 class="card-title">View Stats</h5>
+                                        <p class="card-text">Analyze system performance and usage statistics.</p>
+                                        <a href="/view-stats" class="btn btn-neon w-100">View Stats</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- System Settings Panel -->
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-glassmorphism shadow-lg">
+                                    <div class="card-body">
+                                        <h5 class="card-title">System Settings</h5>
+                                        <p class="card-text">Configure system preferences and settings.</p>
+                                        <a href="/system-settings" class="btn btn-neon w-100">System Settings</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Special Action Panel -->
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-glassmorphism shadow-lg">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Special Action</h5>
+                                        <p class="card-text">This section is for special admin actions.</p>
+                                        <a href="/special-action" class="btn btn-glass w-100">Perform Action</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Edit Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/update-profile" method="POST">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" value="{{ name }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email address</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ email }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-neon">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manage Users Modal -->
+    <div class="modal fade" id="manageUsersModal" tabindex="-1" role="dialog" aria-labelledby="manageUsersModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="manageUsersModalLabel">Manage Users</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Manage and configure users in the system.</p>
+                    <a href="/manage-users" class="btn btn-neon">Go to Manage Users</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
