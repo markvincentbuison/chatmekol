@@ -6,6 +6,10 @@ from google.oauth2 import id_token
 from google.auth.transport.requests import Request
 from dotenv import load_dotenv
 from functools import wraps
+import time
+import threading
+import requests
+
 #--------------------------------------------------------------------------------------------------
 # This Import is for Templates
 from flask import render_template
@@ -40,7 +44,7 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
 def get_redirect_uri():
     if IS_PRODUCTION:
         return "https://127.0.0.1:5000/callback"
-    return "https://google-test-signin.onrender.com/callback"
+    return "https://buisonchatvibes.onrender.com/callback"
 #--------------------------------------------------------------------------------------------------
 # Login required decorator to ensure user is logged in
 def login_is_required(f):
@@ -56,6 +60,10 @@ from flask import make_response
 
 @google_bp.route("/login")
 def login():
+    # Check if the user is already logged in
+    if 'user_id' in session:
+        return redirect(url_for('routes.dashboard'))  # Redirect to dashboard if already logged in
+    
     deployed_url = "google-test-signin.onrender.com"
 
     # Avoid redirect loop on non-allowed hosts
@@ -102,7 +110,7 @@ def callback():
     print(f"Authorization Response URL: {request.url}")
 
     # ✅ Insert ALLOWED_HOSTS check here
-    ALLOWED_HOSTS = ["127.0.0.1", "192.168.", "google-test-signin.onrender.com"]
+    ALLOWED_HOSTS = ["127.0.0.1", "192.168.", "https://buisonchatvibes.onrender.com"]
     if not any(host in request.host for host in ALLOWED_HOSTS):
         print("Unauthorized callback host detected. Clearing session and blocking.")
         session.clear()
@@ -157,6 +165,10 @@ def logout():
 # Index route (for demonstration purposes)
 @google_bp.route("/")
 def index():
+    # Check if the user is already logged in
+    if 'user_id' in session:
+        return redirect(url_for('routes.dashboard'))  # Redirect to dashboard if already logged in
+    
     print("Index route is being accessed")
     return render_template("index.html")
 
@@ -171,4 +183,30 @@ def dashboard():
 
     return render_template("dashboard.html", name=name, email=email, picture=picture)
 
+# ===================== 24/7 Render Keep-Alive ==========================
+
+def ping_self():
+    while True:
+        try:
+            time.sleep(600)  # Every 10 minutes (600 seconds)
+            response = requests.get("https://downloadable-system.onrender.com/")
+            if response.status_code == 200:
+                print("[Keep-Alive] Successfully pinged the app.")
+            else:
+                print(f"[Keep-Alive] Received non-OK status code: {response.status_code}")
+        except Exception as e:
+            print(f"[Keep-Alive Ping Error] {e}")
+
+# Create a background thread for the keep-alive ping function
+keep_alive_thread = threading.Thread(target=ping_self)
+keep_alive_thread.daemon = True  # Daemon thread will exit when the main program ends
+keep_alive_thread.start()
+
+# Keep the main program running to allow the thread to run in the background
+if __name__ == "__main__":
+    try:
+        while True:
+            time.sleep(3600)  # Sleep for 1 hour to keep the script running
+    except KeyboardInterrupt:
+        print("Keep-alive process terminated.")
 #--------------------------------------------------------------------------------------------------

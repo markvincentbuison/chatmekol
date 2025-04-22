@@ -1,6 +1,8 @@
 import os
 import psycopg2
+from psycopg2 import pool
 from dotenv import load_dotenv
+import time
 
 # Load environment variables
 load_dotenv()
@@ -12,26 +14,56 @@ DB_NAME = os.getenv("DB_NAME", "downloadable_app")
 DB_USER = os.getenv("DB_USER", "root")
 DB_PASS = os.getenv("DB_PASS", "rVIIDKOozMHH8LPqHT0dC3EfPxwFN2nP")
 
-# Connect to PostgreSQL
-def get_db_connection():
+# Global connection pool
+db_pool = None
+
+# Initialize the connection pool
+def init_db_pool():
+    global db_pool
     try:
-        conn = psycopg2.connect(
+        db_pool = psycopg2.pool.SimpleConnectionPool(
+            1, 20,  # Minimum 1 connection, maximum 20 connections
             host=DB_HOST,
             port=DB_PORT,
             dbname=DB_NAME,
             user=DB_USER,
             password=DB_PASS,
-            sslmode="require"
+            sslmode="require",
+            connect_timeout=10  # Set connection timeout to 10 seconds
         )
-        return conn
+        print("Connection pool created successfully.")
     except Exception as e:
-        print("[DB ERROR]", e)
+        print("[DB ERROR] Failed to create connection pool:", e)
         raise
 
-# Initialize database and create tables if not exists
+# Get a database connection from the pool
+def get_db_connection():
+    try:
+        if db_pool is None:
+            init_db_pool()  # Initialize pool if not already done
+        conn = db_pool.getconn()  # Get connection from the pool
+        return conn
+    except Exception as e:
+        print("[DB ERROR] Error getting connection from pool:", e)
+        raise
+
+# Release the database connection back to the pool
+def release_db_connection(conn):
+    try:
+        if db_pool:
+            db_pool.putconn(conn)  # Return connection to the pool
+    except Exception as e:
+        print("[DB ERROR] Error releasing connection back to pool:", e)
+        raise
+
+# Initialize database and create tables if they do not exist
 def init_db():
     conn = get_db_connection()
     cur = conn.cursor()
+    
+    # Set a longer statement timeout for creating tables or long-running queries
+    cur.execute("SET statement_timeout = 30000;")  # Timeout in milliseconds (30 seconds)
+    
     cur.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -49,5 +81,21 @@ def init_db():
     );
     """)
     conn.commit()
-    conn.close()
+    release_db_connection(conn)  # Release connection back to pool
 
+# Handle database reconnection in case of a disconnect
+def get_db_connection_with_retry():
+    try:
+        conn = get_db_connection()
+        return conn
+    except psycopg2.OperationalError as e:
+        print(f"[DB ERROR] Operational Error: {e}")
+        time.sleep(5)  # Wait for 5 seconds before retrying
+        return get_db_connection_with_retry()  # Retry connection
+    except Exception as e:
+        print("[DB ERROR]", e)
+        raise
+
+# Example usage:
+if __name__ == "__main__":
+    init_db()  # Initialize the database and create tables if they don't exist
