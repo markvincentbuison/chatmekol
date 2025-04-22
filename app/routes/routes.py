@@ -40,7 +40,7 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
 def get_redirect_uri():
     if IS_PRODUCTION:
         return "https://google-test-signin.onrender.com/callback"
-    return "https://15a4-112-203-134-9.ngrok-free.app/callback"  # or your ngrok URL
+    return "https://google-test-signin.onrender.com/callback"  # or your ngrok URL
 #--------------------------------------------------------------------------------------------------
 # Login required decorator to ensure user is logged in
 def login_is_required(f):
