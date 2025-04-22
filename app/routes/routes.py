@@ -61,7 +61,7 @@ def login():
     # Check if the request is coming from the deployed URL or allow localhost
     if deployed_url not in request.host and "127.0.0.1" not in request.host and "192.168." not in request.host:
         print("Google OAuth login is disabled. Please use the deployed URL.")
-        return "Google Login is only allowed from the deployed URL.", 403
+        return redirect("/login") 
 
     redirect_uri = get_redirect_uri()  # Get the correct redirect URI for the environment
     print(f"Redirect URI being used: {redirect_uri}")
