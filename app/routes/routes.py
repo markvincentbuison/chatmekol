@@ -54,14 +54,8 @@ def login_is_required(f):
 # Google OAuth Login route
 from flask import make_response
 
-# Google OAuth Login route
 @google_bp.route("/login")
 def login():
-    # Check if the user is already logged in
-    if 'google_id' in session:
-        # If already logged in, redirect to dashboard
-        return redirect(url_for('google_bp.dashboard'))
-
     deployed_url = "chatmekol.onrender.com"
 
     # Avoid redirect loop on non-allowed hosts
@@ -94,7 +88,6 @@ def login():
 
     session['state'] = state
     return redirect(authorization_url)
-
 
 
 #--------------------------------------------------------------------------------------------------
@@ -164,7 +157,6 @@ def logout():
 # Index route (for demonstration purposes)
 @google_bp.route("/")
 def index():
-    
     print("Index route is being accessed")
     return render_template("index.html")
 
@@ -180,7 +172,6 @@ def dashboard():
     return render_template("dashboard.html", name=name, email=email, picture=picture)
 
 #--------------------------------------------------------------------------------------------------
-
 
 import time
 import threading
