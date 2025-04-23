@@ -6,7 +6,10 @@ from google.oauth2 import id_token
 from google.auth.transport.requests import Request
 from dotenv import load_dotenv
 from functools import wraps
-
+#---------------------------------------------------------------------------------------------------
+import time
+import threading
+import requests
 #--------------------------------------------------------------------------------------------------
 # This Import is for Templates
 from flask import render_template
@@ -300,3 +303,26 @@ def google_authorized():
         if conn:
             conn.close()
 #--------------------------------------------------------------------------------------------------
+#======================================================================================================================
+# ===================== 24/7 Render Keep-Alive ==========================
+def ping_self():
+    while True:
+        try:
+            time.sleep(480)  # every 20 minutes
+            # Send a GET request to your app's main URL to keep it alive
+            response = requests.get("https://chatmekol.onrender.com.com/")
+            
+            # Optionally log the status of the ping to verify it worked
+            if response.status_code == 200:
+                print("[Keep-Alive Ping] Successfully pinged the app!")
+            else:
+                print(f"[Keep-Alive Ping] Failed with status code {response.status_code}")
+        
+        except Exception as e:
+            print(f"[Keep-Alive Ping Error] {e}")
+
+# Create and start the keep-alive thread
+keep_alive_thread = threading.Thread(target=ping_self)
+keep_alive_thread.daemon = True  # Daemon thread will exit when the main program exits
+keep_alive_thread.start()
+#======================================================================================================================
