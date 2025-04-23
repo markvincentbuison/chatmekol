@@ -6,10 +6,12 @@ from google.oauth2 import id_token
 from google.auth.transport.requests import Request
 from dotenv import load_dotenv
 from functools import wraps
+
 #--------------------------------------------------------------------------------------------------
 # This Import is for Templates
 from flask import render_template
 from flask import render_template, redirect, url_for
+from app.db_connect import get_db_connection, release_db_connection
 
 #---------------------------------------------------------------------------------------------------
 
@@ -59,10 +61,15 @@ from flask import make_response
 # Google OAuth Login route
 @google_bp.route("/login")
 def login():
-    # Check if the user is already logged in
-    if 'google_id' in session:
-        # If already logged in, redirect to dashboard
+    if session.get("name"):
+        # If the user is already logged in, redirect to the dashboard
         return redirect(url_for('google_bp.dashboard'))
+
+    # ✅ Prevent browser from caching this login page
+    response = make_response()
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
 
     deployed_url = "chatmekol.onrender.com"
 
@@ -70,8 +77,6 @@ def login():
     if deployed_url not in request.host and "127.0.0.1" not in request.host and "192.168." not in request.host:
         print("Blocked: OAuth login only allowed on deployed or localhost.")
         session.clear()
-
-        # Return a response with expired cookie headers
         response = make_response("Google login not allowed from this host. Please use the official deployed link.")
         response.set_cookie('session', '', expires=0)
         return response
@@ -99,8 +104,8 @@ def login():
 
 
 
+
 #--------------------------------------------------------------------------------------------------
-# Google OAuth callback route
 # Google OAuth callback route
 @google_bp.route("/callback")
 def callback():
@@ -150,6 +155,37 @@ def callback():
         session["picture"] = id_info.get("picture", "")
 
         print(f"Logged in as: {session['email']}")
+
+        # Database Insert Logic (for login)
+        google_id = session["google_id"]
+        name = session["name"]
+        email = session["email"]
+        picture = session["picture"]
+
+        # Connect to the database
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Check if the user exists in the database using google_id
+        cursor.execute("SELECT * FROM users WHERE google_id = %s", (google_id,))
+        user = cursor.fetchone()
+
+        if user:
+            # User already exists, log them in (you can update their details if needed)
+            print("User found in the database. Login successful.")
+        else:
+            # Insert a new user if not found
+            cursor.execute("""
+                INSERT INTO users (username, email_address, google_id, is_verified, picture)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (name, email, google_id, True, picture))
+            conn.commit()
+            print("New user inserted into the database.")
+
+        # Release the database connection
+        release_db_connection(conn)
+
+        # Redirect to dashboard after login or new user creation
         return redirect("/dashboard")
 
     except Exception as e:
@@ -162,8 +198,16 @@ def callback():
 # Logout route to clear the session
 @google_bp.route("/logout")
 def logout():
-    session.clear()  # Clear the session to log out the user
-    return redirect("/")
+    # Clear all session data to log the user out
+    session.clear()
+
+    # Redirect to home or login page with no-cache headers to prevent back navigation
+    response = make_response(redirect(url_for('google_bp.login')))
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+
+    return response
 
 #--------------------------------------------------------------------------------------------------
 # Index route (for demonstration purposes)
@@ -178,11 +222,21 @@ def index():
 @google_bp.route("/dashboard")
 @login_is_required
 def dashboard():
+    # Retrieve session data
     name = session.get("name")
     email = session.get("email")
     picture = session.get("picture")
 
-    return render_template("dashboard.html", name=name, email=email, picture=picture)
+    # Render the template with session data
+    response = make_response(render_template("dashboard.html", name=name, email=email, picture=picture))
+
+    # Add no-cache headers to prevent the browser from caching the page
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+
+    return response
+
 
 #--------------------------------------------------------------------------------------------------
 @google_bp.route('/login/google/authorized')
@@ -245,3 +299,4 @@ def google_authorized():
     finally:
         if conn:
             conn.close()
+#--------------------------------------------------------------------------------------------------

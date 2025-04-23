@@ -1,4 +1,3 @@
-from db_connect import get_db_connection, release_db_connection
 import os
 import psycopg2
 from dotenv import load_dotenv
