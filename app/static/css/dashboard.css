@@ -1,0 +1,92 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0f0f0f;
+    color: #fff;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #1a1a1a;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0, 255, 204, 0.2);
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-pic {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #00ffcc;
+    margin-bottom: 10px;
+}
+
+.sidebar-header div {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.sidebar-header small {
+    font-size: 12px;
+    color: #ccc;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar-menu li {
+    padding: 10px 0;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.sidebar-menu li i {
+    margin-right: 10px;
+}
+
+.sidebar-menu li:hover {
+    color: #00ffcc;
+}
+
+.main-content {
+    flex: 1;
+    padding: 40px;
+    background-image: url("../background/bp_jpg.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    backdrop-filter: blur(2px);
+}
+
+.header h2 {
+    font-size: 32px;
+    margin: 0;
+}
+
+.header p {
+    font-size: 16px;
+    color: #eee;
+}
+
+.content-box {
+    margin-top: 30px;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px #00ffcc;
+}
