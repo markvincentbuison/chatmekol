@@ -190,7 +190,7 @@ def ping_self():
         try:
             time.sleep(600)  # Every 10 minutes (600 seconds)
             response = requests.get("https://chatmekol.onrender.com/")
-            if response.status_code == 200:
+            if response.status_code == 100:
                 print("[Keep-Alive] Successfully pinged the app.")
             else:
                 print(f"[Keep-Alive] Received non-OK status code: {response.status_code}")
@@ -206,7 +206,7 @@ keep_alive_thread.start()
 if __name__ == "__main__":
     try:
         while True:
-            time.sleep(3600)  # Sleep for 1 hour to keep the script running
+            time.sleep(200)  # Sleep for 1 hour to keep the script running
     except KeyboardInterrupt:
         print("Keep-alive process terminated.")
 #--------------------------------------------------------------------------------------------------
