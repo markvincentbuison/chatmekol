@@ -14,6 +14,13 @@ DB_NAME = os.getenv("DB_NAME", "downloadable_app")
 DB_USER = os.getenv("DB_USER", "root")
 DB_PASS = os.getenv("DB_PASS", "rVIIDKOozMHH8LPqHT0dC3EfPxwFN2nP")
 
+# Google OAuth config
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "37646923386-sq0a7ov7v6ukjo0kisv0mlnt96gv3gpc.apps.googleusercontent.com")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "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")
+GOOGLE_AUTHORIZATION_URL = os.getenv("GOOGLE_AUTHORIZATION_URL", "https://accounts.google.com/o/oauth2/auth")
+GOOGLE_TOKEN_URL = os.getenv("GOOGLE_TOKEN_URL", "https://oauth2.googleapis.com/token")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "https://chatmekol.onrender.com/callback")
+
 # Global connection pool
 db_pool = None
 
