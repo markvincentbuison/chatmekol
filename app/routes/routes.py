@@ -44,7 +44,7 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
 def get_redirect_uri():
     if IS_PRODUCTION:
         return "https://127.0.0.1:5000/callback"
-    return "https://buisonchatvibes.onrender.com/callback"
+    return "https://chatmekol.onrender.com/callback"
 #--------------------------------------------------------------------------------------------------
 # Login required decorator to ensure user is logged in
 def login_is_required(f):
@@ -64,7 +64,7 @@ def login():
     if 'user_id' in session:
         return redirect(url_for('routes.dashboard'))  # Redirect to dashboard if already logged in
     
-    deployed_url = "google-test-signin.onrender.com"
+    deployed_url = "chatmekol.onrender.com"
 
     # Avoid redirect loop on non-allowed hosts
     if deployed_url not in request.host and "127.0.0.1" not in request.host and "192.168." not in request.host:
@@ -110,7 +110,7 @@ def callback():
     print(f"Authorization Response URL: {request.url}")
 
     # ✅ Insert ALLOWED_HOSTS check here
-    ALLOWED_HOSTS = ["127.0.0.1", "192.168.", "https://buisonchatvibes.onrender.com"]
+    ALLOWED_HOSTS = ["127.0.0.1", "192.168.", "https://chatmekol.onrender.com"]
     if not any(host in request.host for host in ALLOWED_HOSTS):
         print("Unauthorized callback host detected. Clearing session and blocking.")
         session.clear()
@@ -189,7 +189,7 @@ def ping_self():
     while True:
         try:
             time.sleep(600)  # Every 10 minutes (600 seconds)
-            response = requests.get("https://downloadable-system.onrender.com/")
+            response = requests.get("https://chatmekol.onrender.com/")
             if response.status_code == 200:
                 print("[Keep-Alive] Successfully pinged the app.")
             else:
