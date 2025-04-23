@@ -9,8 +9,10 @@ from functools import wraps
 #--------------------------------------------------------------------------------------------------
 # This Import is for Templates
 from flask import render_template
+from flask import render_template, redirect, url_for
 
 #---------------------------------------------------------------------------------------------------
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -54,8 +56,14 @@ def login_is_required(f):
 # Google OAuth Login route
 from flask import make_response
 
+# Google OAuth Login route
 @google_bp.route("/login")
 def login():
+    # Check if the user is already logged in
+    if 'google_id' in session:
+        # If already logged in, redirect to dashboard
+        return redirect(url_for('google_bp.dashboard'))
+
     deployed_url = "chatmekol.onrender.com"
 
     # Avoid redirect loop on non-allowed hosts
@@ -90,7 +98,9 @@ def login():
     return redirect(authorization_url)
 
 
+
 #--------------------------------------------------------------------------------------------------
+# Google OAuth callback route
 # Google OAuth callback route
 @google_bp.route("/callback")
 def callback():
@@ -133,6 +143,7 @@ def callback():
         )
         print("ID token verified!")
 
+        # Store user info in the session
         session["google_id"] = id_info.get("sub")
         session["name"] = id_info.get("name", "Guest")
         session["email"] = id_info.get("email")
@@ -146,6 +157,7 @@ def callback():
         abort(500, f"OAuth callback failed: {e}")
 
 
+
 #--------------------------------------------------------------------------------------------------
 # Logout route to clear the session
 @google_bp.route("/logout")
@@ -157,6 +169,7 @@ def logout():
 # Index route (for demonstration purposes)
 @google_bp.route("/")
 def index():
+    
     print("Index route is being accessed")
     return render_template("index.html")
 
@@ -172,3 +185,63 @@ def dashboard():
     return render_template("dashboard.html", name=name, email=email, picture=picture)
 
 #--------------------------------------------------------------------------------------------------
+@google_bp.route('/login/google/authorized')
+def google_authorized():
+    if not google.authorized:
+        flash('Authorization failed or was cancelled.', 'danger')
+        return redirect(url_for('routes.index'))
+
+    resp = google.get('/oauth2/v2/userinfo')
+    if not resp.ok:
+        flash('Failed to fetch user info from Google.', 'danger')
+        return redirect(url_for('routes.index'))
+
+    user_info = resp.json()
+    email = user_info.get('email')
+    username = user_info.get('name')
+    google_id = user_info.get('id')
+
+    if not all([email, username, google_id]):
+        flash('Incomplete Google user information.', 'danger')
+        return redirect(url_for('routes.index'))
+
+    # Database logic
+    conn = create_connection()
+    if conn is None:
+        flash('Database connection failed.', 'danger')
+        return redirect(url_for('routes.index'))
+
+    try:
+        cur = conn.cursor()
+        # Check if user already exists
+        cur.execute("SELECT * FROM users WHERE google_id = %s", (google_id,))
+        user = cur.fetchone()
+
+        if user:
+            session['user_id'] = user[0]
+            session['username'] = user[1]
+            session['is_admin'] = user[-2]
+        else:
+            # Insert new Google user
+            cur.execute("""
+                INSERT INTO users (username, email_address, google_id)
+                VALUES (%s, %s, %s) RETURNING id, is_admin;
+            """, (username, email, google_id))
+            inserted_user = cur.fetchone()
+            conn.commit()
+
+            session['user_id'] = inserted_user[0]
+            session['username'] = username
+            session['is_admin'] = inserted_user[1]
+
+        flash('Successfully logged in with Google!', 'success')
+        return redirect(url_for('routes.dashboard'))
+
+    except Exception as e:
+        print("[Google Login DB ERROR]", e)
+        flash('An error occurred during Google login.', 'danger')
+        return redirect(url_for('routes.index'))
+
+    finally:
+        if conn:
+            conn.close()

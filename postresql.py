@@ -6,7 +6,7 @@ import time
 
 # Load environment variables
 load_dotenv()
-
+db_pool = None 
 # PostgreSQL config
 DB_HOST = os.getenv("DB_HOST", "dpg-d00ihffgi27c73bb4afg-a.virginia-postgres.render.com")
 DB_PORT = os.getenv("DB_PORT", 5432)
@@ -42,7 +42,7 @@ def init_db_pool():
     except Exception as e:
         print("[DB ERROR] Failed to create connection pool:", e)
         raise
-
+#----------------------------------------------------------------------------------------------------------------
 # Get a database connection from the pool
 def get_db_connection():
     try:
@@ -53,7 +53,7 @@ def get_db_connection():
     except Exception as e:
         print("[DB ERROR] Error getting connection from pool:", e)
         raise
-
+#----------------------------------------------------------------------------------------------------------------
 # Release the database connection back to the pool
 def release_db_connection(conn):
     try:
