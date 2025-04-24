@@ -18,7 +18,7 @@ load_dotenv()
 IS_PRODUCTION = os.getenv("FLASK_ENV") == "production"
 #--------------------------------------------------------------------------------------------------
 # Define CLIENT_SECRETS_FILE globally by using a helper function
-# Define CLIENT_SECRETS_FILE globally by using a helper function
+
 def get_client_secrets_file():
     host = request.host
     if "localhost" in host or "127.0.0.1" in host or "192.168." in host or "ngrok" in host:
@@ -54,8 +54,8 @@ def login_is_required(f):
 # Google OAuth Login route
 from flask import make_response
 
-@google_bp.route("/login")
-def login():
+@google_bp.route("/login/google")
+def login_google():
     deployed_url = "chatmekol.onrender.com"
 
     # Avoid redirect loop on non-allowed hosts
@@ -172,30 +172,3 @@ def dashboard():
     return render_template("dashboard.html", name=name, email=email, picture=picture)
 
 #--------------------------------------------------------------------------------------------------
-
-import time
-import threading
-import requests
-
-# ===================== 24/7 Render Keep-Alive ==========================
-def ping_self():
-    while True:
-        try:
-            time.sleep(480)  # every 20 minutes
-            # Send a GET request to your app's main URL to keep it alive
-            response = requests.get("https://chatmekol.onrender.com.com/")
-            
-            # Optionally log the status of the ping to verify it worked
-            if response.status_code == 200:
-                print("[Keep-Alive Ping] Successfully pinged the app!")
-            else:
-                print(f"[Keep-Alive Ping] Failed with status code {response.status_code}")
-        
-        except Exception as e:
-            print(f"[Keep-Alive Ping Error] {e}")
-
-# Create and start the keep-alive thread
-keep_alive_thread = threading.Thread(target=ping_self)
-keep_alive_thread.daemon = True  # Daemon thread will exit when the main program exits
-keep_alive_thread.start()
-#======================================================================================================================

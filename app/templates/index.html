@@ -9,8 +9,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}"/>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}"/>
-
+  <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet" />
   <style>
     body, html {
       margin: 0;
@@ -20,120 +19,6 @@
       background: url("{{ url_for('static', filename='background/bp.png') }}") no-repeat center center fixed;
       background-size: cover;
     }
-
-    .login-container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100%;
-      max-width: 400px;
-      background: rgba(0, 0, 0, 0.75);
-      border-radius: 15px;
-      padding: 30px;
-      color: #00ffe5;
-      box-shadow: 0 0 20px #00ffe5;
-    }
-
-    .login-container h2 {
-      margin-bottom: 30px;
-      text-align: center;
-      color: #fff;
-      text-shadow: 0 0 5px #00ffe5;
-    }
-
-    .neon-input {
-      background: transparent;
-      border: 2px solid #00ffe5;
-      color: #00ffe5;
-      border-radius: 25px;
-      padding: 12px;
-      margin-bottom: 20px;
-      width: 100%;
-      transition: 0.3s;
-    }
-
-    .neon-input:focus {
-      outline: none;
-      box-shadow: 0 0 10px #00ffe5;
-      border-color: #fff;
-    }
-
-    .btn-neon {
-      background: transparent;
-      border: 2px solid #00ffe5;
-      color: #00ffe5;
-      border-radius: 25px;
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-
-    .btn-neon:hover {
-      background: #00ffe5;
-      color: #000;
-      box-shadow: 0 0 20px #00ffe5;
-    }
-
-    .text-links {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 25px;
-      font-size: 13px;
-    }
-
-    .text-links a {
-      color: #00ffe5;
-      text-decoration: none;
-    }
-
-    .text-links a:hover {
-      text-decoration: underline;
-    }
-
-    .social-btn {
-      border-radius: 25px;
-      margin-top: 15px;
-      padding: 12px;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-
-    .btn-google {
-      background-color: #db4437;
-      color: white;
-    }
-
-    .btn-facebook {
-      background-color: #3b5998;
-      color: white;
-    }
-
-    .btn-google:hover {
-      background-color: #c23321;
-    }
-
-    .btn-facebook:hover {
-      background-color: #2d4373;
-    }
-
-    .top-right-info {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      color: #00ffe5;
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    .modal-content {
-      background: #111;
-      color: #00ffe5;
-      border-radius: 15px;
-    }
-
   </style>
 </head>
 <body>
@@ -154,7 +39,7 @@
       <a href="#" data-bs-toggle="modal" data-bs-target="#signupModal">Create Account</a>
     </div>
 
-    <a href="/login" class="btn social-btn btn-google w-100 mt-3"><i class="fab fa-google me-2"></i>Login with Google</a>
+    <a href="/login/google" class="btn social-btn btn-google w-100 mt-3"><i class="fab fa-google me-2"></i>Login with Google</a>
     <a href="/login/facebook" class="btn social-btn btn-facebook w-100"><i class="fab fa-facebook me-2"></i>Login with Facebook</a>
   </div>
 

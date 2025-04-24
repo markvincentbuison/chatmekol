@@ -1,0 +1,180 @@
+/* General Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: url('https://www.example.com/your-background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+  }
+  
+  /* Login Container */
+  .login-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 400px;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 15px;
+    padding: 30px;
+    color: #00ffe5;
+    box-shadow: 0 0 20px #00ffe5;
+    text-align: center;
+  }
+  
+  /* Header inside login form */
+  .login-container h2 {
+    margin-bottom: 30px;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 0 5px #00ffe5;
+  }
+  
+  /* Neon Input Styling */
+  .neon-input {
+    background: transparent;
+    border: 2px solid #00ffe5;
+    color: #00ffe5;
+    border-radius: 25px;
+    padding: 12px;
+    margin-bottom: 20px;
+    width: 100%;
+    transition: 0.3s;
+  }
+  
+  .neon-input:focus {
+    outline: none;
+    box-shadow: 0 0 10px #00ffe5;
+    border-color: #fff;
+  }
+  
+  /* Universal Button Styling (All Buttons) */
+  .btn-neon {
+    background: transparent;
+    border: 2px solid #00ffe5;
+    color: #00ffe5;
+    border-radius: 25px;
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  
+  .btn-neon:hover {
+    background: #00ffe5;
+    color: #000;
+    box-shadow: 0 0 20px #00ffe5;
+  }
+  
+  /* Login Button */
+  .btn-login {
+    background: transparent;
+    border: 2px solid #00ffe5;
+    color: #00ffe5;
+    border-radius: 25px;
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  
+  .btn-login:hover {
+    background: #00ffe5;
+    color: #000;
+    box-shadow: 0 0 20px #00ffe5;
+  }
+  
+  /* Social Buttons Styling */
+  .social-btn {
+    border-radius: 25px;
+    margin-top: 15px;
+    padding: 12px;
+    font-weight: bold;
+    transition: 0.3s;
+    width: 100%;
+  }
+  
+  /* Google Login Button */
+  .btn-google {
+    background-color: #db4437;
+    color: white;
+    border: 2px solid #db4437;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .btn-google:hover {
+    background-color: #c23321;
+    color: #fff;
+    border: 2px solid #c23321;
+    box-shadow: 0 0 20px #db4437;
+  }
+  
+  /* Facebook Login Button */
+  .btn-facebook {
+    background-color: #3b5998;
+    color: white;
+    border: 2px solid #3b5998;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .btn-facebook:hover {
+    background-color: #2d4373;
+    color: #fff;
+    border: 2px solid #2d4373;
+    box-shadow: 0 0 20px #3b5998;
+  }
+  
+  /* Text links */
+  .text-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    font-size: 13px;
+  }
+  
+  .text-links a {
+    color: #00ffe5;
+    text-decoration: none;
+  }
+  
+  .text-links a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Top right info (can be a button or a label) */
+  .top-right-info {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: #00ffe5;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  /* Modal Styling */
+  .modal-content {
+    background: #111;
+    color: #00ffe5;
+    border-radius: 15px;
+    padding: 20px;
+  }
+  
+  .close-btn {
+    color: #00ffe5;
+    font-size: 30px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .close-btn:hover {
+    color: #fff;
+  }
+  
