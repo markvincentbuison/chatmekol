@@ -33,6 +33,8 @@ def create_app():
             # SESSION_COOKIE_DOMAIN='.yourdomain.com',  # Optional for prod with custom domain
             PERMANENT_SESSION_LIFETIME=timedelta(days=31),
         )
+    # Set session expiration time (ensure it's in the create_app function)
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 
     #---------------------------------------------------------------------------------------------------
     return app

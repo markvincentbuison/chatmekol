@@ -7,10 +7,15 @@ from google.auth.transport.requests import Request
 from dotenv import load_dotenv
 from functools import wraps
 #--------------------------------------------------------------------------------------------------
+from app.routes.postgresql import get_db_connection
+
+#--------------------------------------------------------------------------------------------------
 # This Import is for Templates
 from flask import render_template
+#--------------------------------------------------------------------------------------------------
+from flask import session
+#--------------------------------------------------------------------------------------------------
 
-#---------------------------------------------------------------------------------------------------
 # Load environment variables from .env file
 load_dotenv()
 
@@ -133,25 +138,54 @@ def callback():
         )
         print("ID token verified!")
 
+        # Store Google user data in session
         session["google_id"] = id_info.get("sub")
         session["name"] = id_info.get("name", "Guest")
         session["email"] = id_info.get("email")
         session["picture"] = id_info.get("picture", "")
 
         print(f"Logged in as: {session['email']}")
+
+        # Insert user data into PostgreSQL if not already in the database
+        from app.routes.postgresql import get_db_connection
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Check if user already exists by Google ID
+        cur.execute("SELECT id FROM users WHERE google_id = %s", (session["google_id"],))
+        existing_user = cur.fetchone()
+
+        if not existing_user:
+            cur.execute("""
+                INSERT INTO users (username, email_address, google_id, picture, is_verified)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (session["name"], session["email"], session["google_id"], session["picture"], True))
+            conn.commit()
+
+        cur.close()
+        conn.close()
+
+        # Redirect user to dashboard after successful login
         return redirect("/dashboard")
 
     except Exception as e:
         print(f"Error during Google login callback: {e}")
         abort(500, f"OAuth callback failed: {e}")
 
-
 #--------------------------------------------------------------------------------------------------
 # Logout route to clear the session
 @google_bp.route("/logout")
 def logout():
-    session.clear()  # Clear the session to log out the user
-    return redirect("/")
+    session.clear()  # Clear Flask session data
+
+    # Redirect to Google's logout, then redirect back to your app's homepage
+    google_logout_url = (
+        "https://accounts.google.com/Logout"
+        "?continue=https://appengine.google.com/_ah/logout"
+        "?continue=https://chatmekol.onrender.com/"
+    )
+
+    return redirect(google_logout_url)
 
 #--------------------------------------------------------------------------------------------------
 # Index route (for demonstration purposes)
@@ -172,3 +206,11 @@ def dashboard():
     return render_template("dashboard.html", name=name, email=email, picture=picture)
 
 #--------------------------------------------------------------------------------------------------
+
+
+@google_bp.route('/test-db')
+def test_db():
+    conn = get_db_connection()
+    if conn:
+        return "PostgreSQL connected successfully!"
+    return "Connection failed."
