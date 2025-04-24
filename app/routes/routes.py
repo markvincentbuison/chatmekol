@@ -6,24 +6,23 @@ from google.oauth2 import id_token
 from google.auth.transport.requests import Request
 from dotenv import load_dotenv
 from functools import wraps
+#---------------------------------------------------------------------------------------------------
+from flask import make_response
 #--------------------------------------------------------------------------------------------------
 from app.routes.postgresql import get_db_connection
-
 #--------------------------------------------------------------------------------------------------
 # This Import is for Templates
 from flask import render_template
 #--------------------------------------------------------------------------------------------------
 from flask import session
 #--------------------------------------------------------------------------------------------------
-
 # Load environment variables from .env file
 load_dotenv()
-
+#--------------------------------------------------------------------------------------------------
 # Determine if running in production
 IS_PRODUCTION = os.getenv("FLASK_ENV") == "production"
 #--------------------------------------------------------------------------------------------------
 # Define CLIENT_SECRETS_FILE globally by using a helper function
-
 def get_client_secrets_file():
     host = request.host
     if "localhost" in host or "127.0.0.1" in host or "192.168." in host or "ngrok" in host:
@@ -93,8 +92,6 @@ def login_google():
 
     session['state'] = state
     return redirect(authorization_url)
-
-
 #--------------------------------------------------------------------------------------------------
 # Google OAuth callback route
 @google_bp.route("/callback")
@@ -171,7 +168,6 @@ def callback():
     except Exception as e:
         print(f"Error during Google login callback: {e}")
         abort(500, f"OAuth callback failed: {e}")
-
 #--------------------------------------------------------------------------------------------------
 # Logout route to clear the session
 @google_bp.route("/logout")
@@ -183,9 +179,12 @@ def logout():
 # Index route (for demonstration purposes)
 @google_bp.route("/")
 def index():
-    print("Index route is being accessed")
-    return render_template("index.html")
-
+    if "google_id" in session:
+        return redirect("/dashboard")
+    response = make_response(render_template("index.html"))
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    return response
 #--------------------------------------------------------------------------------------------------
 # Protected area route (for logged-in users)
 @google_bp.route("/dashboard")
@@ -196,13 +195,11 @@ def dashboard():
     picture = session.get("picture")
 
     return render_template("dashboard.html", name=name, email=email, picture=picture)
-
 #--------------------------------------------------------------------------------------------------
-
-
 @google_bp.route('/test-db')
 def test_db():
     conn = get_db_connection()
     if conn:
         return "PostgreSQL connected successfully!"
     return "Connection failed."
+#--------------------------------------------------------------------------------------------------
