@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from app.__bridge__ import create_app
 
 # Create the app
