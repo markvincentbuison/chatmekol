@@ -176,16 +176,8 @@ def callback():
 # Logout route to clear the session
 @google_bp.route("/logout")
 def logout():
-    session.clear()  # Clear Flask session data
-
-    # Redirect to Google's logout, then redirect back to your app's homepage
-    google_logout_url = (
-        "https://accounts.google.com/Logout"
-        "?continue=https://appengine.google.com/_ah/logout"
-        "?continue=https://chatmekol.onrender.com/"
-    )
-
-    return redirect(google_logout_url)
+    session.clear()  # Clear the session to log out the user
+    return redirect("/")
 
 #--------------------------------------------------------------------------------------------------
 # Index route (for demonstration purposes)
