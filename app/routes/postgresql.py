@@ -8,8 +8,8 @@ load_dotenv()
 
 def get_db_connection():
     try:
-        # First try full DATABASE_URL
         database_url = os.getenv("DATABASE_URL")
+        print(f"Trying to connect with DATABASE_URL: {database_url}")  # Log the URL
         if database_url:
             return connect(
                 dsn=database_url,
@@ -20,6 +20,7 @@ def get_db_connection():
     except Exception as e:
         print("Failed with DATABASE_URL, falling back to individual variables. Error:", e)
         try:
+            print(f"Trying to connect with individual DB variables: Host={os.getenv('DB_HOST')}")  # Log individual vars
             return connect(
                 host=os.getenv("DB_HOST"),
                 port=os.getenv("DB_PORT"),

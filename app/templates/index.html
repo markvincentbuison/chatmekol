@@ -4,15 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
  
-  <title>TunNer Website</title>
+  <title>ChatmeKol</title>
 
   <!-- Bootstrap & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
   <link href="{{ url_for('static', filename='css/new_design_login.css') }}" rel="stylesheet" />
-  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}"/>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}" type="image/x-icon">
 
+  
   <style>
   </style>
 </head>
@@ -90,7 +91,7 @@
   </div>
 
   <div id="signupTab" class="form-tab">
-    <form method="POST" action="/signup">
+    <form method="POST" action="{{ url_for('routes_new.signup') }}">
       <div class="form-floating mb-3">
         <input type="text" class="form-control" id="signupUser" name="username" placeholder="Username" required />
         <label for="signupUser"><i class="fas fa-user me-2"></i>Username</label>

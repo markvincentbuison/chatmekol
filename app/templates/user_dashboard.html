@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}"/>
+    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}"/>
+    <style>
+      
+        .main-content {
+            margin-left: 250px;
+            width: calc(100vw - 250px);
+            height: 100vh;
+            padding: 20px;
+            background-image: url('{{ url_for('static', filename='background/bp.png') }}');
+            background-size: cover;
+            background-position: center;
+            color: black;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+              <img src="{{ picture or 'https://lh3.googleusercontent.com/a/ACg8ocIsiYk5BypLbTs48boVA0DMv_emvqdfIHm7XwFaEA47YOKzvShrQg=s96-c' }}" alt="Profile Picture" class="profile-pic">
+              <div>{{ name }}{{ username }}</div>
+                <small>{{ email }}</small>
+                {% if is_verified %}
+        <span class="text-success">Your email is verified! 🎉</span>
+      {% else %}
+        <span class="text-danger">Your email is not verified.</span>
+       
+          <button  class="fas fa-envelope" data-bs-toggle="modal" data-bs-target="#verifyModal">Verify Email
+        
+      {% endif %}
+            </div>
+            <ul class="sidebar-menu">
+                <li onclick="showContent('home')"><i class="fas fa-home"></i> Home</li>
+                <li onclick="showContent('profile')"><i class="fas fa-user"></i> Profile</li>
+                <li onclick="showContent('messages')"><i class="fas fa-envelope"></i> Messages</li>
+                <li onclick="showContent('settings')"><i class="fas fa-cog"></i> Settings</li>
+                <li data-toggle="modal" data-target="#logoutModal"><i class="fas fa-sign-out-alt"></i> Logout</li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h2>Welcome, {{ name }}{{ username }}!</h2>
+                <p>This is your dashboard. Start interacting with your messages, profile, or explore more options from the sidebar.</p>
+            </div>
+            <div id="home" class="content-box">
+                <h3>Home</h3>
+                <p>Welcome to the home section!</p>
+            </div>
+            <div id="profile" class="content-box hidden">
+                <h3>Profile</h3>
+                <p>This is your profile section. Update your personal information here.</p>
+            </div>
+            <div id="messages" class="content-box hidden">
+                <h3>Messages</h3>
+                <p>This is your messages section. You can read and send messages here.</p>
+            </div>
+            <div id="settings" class="content-box hidden">
+                <h3>Settings</h3>
+                <p>This is your settings section. Manage your preferences and account settings here.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Logout Confirmation -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to log out?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <a href="/logout" class="btn btn-danger">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showContent(content) {
+            const contentBoxes = document.querySelectorAll('.content-box');
+            contentBoxes.forEach(box => box.classList.add('hidden'));
+            document.getElementById(content).classList.remove('hidden');
+        }
+
+        showContent('home');
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        if (window.history && window.history.pushState) {
+            window.history.pushState(null, "", window.location.href);
+            window.onpopstate = function () {
+                window.history.pushState(null, "", window.location.href);
+            };
+        }
+    </script>
+</body>
+</html>

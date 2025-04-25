@@ -1,0 +1,44 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-4">Welcome, {{ username }} (Admin)</h2>
+    <p>Your account is {{ 'verified' if is_verified else 'not verified' }}.</p>
+
+    <!-- Admin-specific features -->
+    <div class="admin-panel mt-4">
+        <h3>Admin Panel</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">User Management</h5>
+                        <p>Manage users, verify accounts, or block users.</p>
+                        <a href="#" class="btn btn-primary">Manage Users</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">System Stats</h5>
+                        <p>View system statistics, activity logs, and usage data.</p>
+                        <a href="#" class="btn btn-primary">View Stats</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Configuration</h5>
+                        <p>Configure system settings such as email templates, themes, etc.</p>
+                        <a href="#" class="btn btn-primary">System Configuration</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="{{ url_for('routes.logout') }}" class="btn btn-danger mt-4">Logout</a>
+</div>
+{% endblock %}
