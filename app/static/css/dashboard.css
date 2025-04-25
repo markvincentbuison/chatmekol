@@ -1,92 +1,79 @@
-body {
+* {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #0f0f0f;
-    color: #fff;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.container {
+html, body {
+    height: 100%;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+.dashboard-container {
     display: flex;
     height: 100vh;
+    width: 100vw;
 }
 
 .sidebar {
     width: 250px;
-    background-color: #1a1a1a;
-    padding: 20px;
-    box-shadow: 2px 0 10px rgba(0, 255, 204, 0.2);
+    background-color: #2c3e50;
+    color: white;
+    height: 100vh;
+    position: fixed;
 }
 
 .sidebar-header {
+    padding: 20px;
     text-align: center;
-    margin-bottom: 30px;
 }
 
 .profile-pic {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #00ffcc;
-    margin-bottom: 10px;
-}
-
-.sidebar-header div {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.sidebar-header small {
-    font-size: 12px;
-    color: #ccc;
 }
 
 .sidebar-menu {
     list-style: none;
     padding: 0;
+    margin-top: 20px;
 }
 
 .sidebar-menu li {
-    padding: 10px 0;
-    color: #fff;
-    font-size: 14px;
+    padding: 20px;
     cursor: pointer;
-    transition: 0.3s;
-}
-
-.sidebar-menu li i {
-    margin-right: 10px;
+    transition: background-color 0.3s;
 }
 
 .sidebar-menu li:hover {
-    color: #00ffcc;
+    background-color: #34495e;
 }
 
-.main-content {
-    flex: 1;
-    padding: 40px;
-    background-image: url("../background/bp_jpg.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    backdrop-filter: blur(2px);
+.sidebar-menu li a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
-.header h2 {
-    font-size: 32px;
-    margin: 0;
+.sidebar-menu li a:hover {
+    background-color: #34495e;
+    color: white;
 }
 
-.header p {
-    font-size: 16px;
-    color: #eee;
+.header {
+    margin-bottom: 20px;
 }
 
 .content-box {
-    margin-top: 30px;
-    background-color: rgba(0, 0, 0, 0.6);
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 15px #00ffcc;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.content-box.hidden {
+    display: none;
 }

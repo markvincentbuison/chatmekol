@@ -1,0 +1,258 @@
+/* Auth box centered */
+.auth-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 0 25px #000000;
+    z-index: 1000;
+    color: #fff;
+  }
+  
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+.welcome-message {
+  font-size: 50px;
+  font-weight: bold;
+  color: #be0b89;
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 5px #000000, 0 0 10px #000000, 0 0 15px #c40f54;
+  animation: float 3s ease-in-out infinite, glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 5px #00ffff, 0 0 10px #000000, 0 0 15px #00ffff;
+  }
+  to {
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #070707, 0 0 30px #00ffff;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+  
+  .form-tab {
+    display: none;
+  }
+  
+  .form-tab.active {
+    display: block;
+  }
+  
+  .btn-neon {
+    background: transparent;
+    border: 2px solid #00ffff;
+    color: #00ffff;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-neon:hover {
+    background: #00ffff;
+    color: #000;
+  }
+  
+  .social-btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #00ffff;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  
+  .social-btn:hover {
+    background: #ee1f10;
+    color: #000;
+  }
+  
+  .facebook-btn {
+    background-color: rgba(59, 89, 152, 0.2);
+    color: #00ffff;
+  }
+  
+  .facebook-btn:hover {
+    background-color: #3b5998;
+    color: #fff;
+  }
+  
+  .eye-icon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #00ffff;
+  }
+  
+  .switch-link {
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .switch-link a {
+    color: #00ffff;
+    text-decoration: none;
+  }
+  
+  .switch-link a:hover {
+    text-decoration: underline;
+  }
+  
+  /* QR Code */
+  #floating-qrcode {
+    position: fixed;
+    top: 50%;
+    left: 450px; /* right beside auth box (400px wide + some margin) */
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff;
+    z-index: 9999;
+    text-align: center;
+  }
+  
+  #floating-qrcode h6 {
+    color: #00ffff;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  
+  body {
+    margin: 0;
+    background-color: #000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+    background-image: url("../background/bp.png");
+    background-size: cover;
+    background-position: center;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+  }
+  
+  #particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  
+  .form-floating {
+    position: relative;
+  }
+  
+  .form-control {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #00ffff;
+   /* border: 1px solid #ff00b3; */
+  }
+  
+  .form-control::placeholder {
+    color: #00ffff;
+  }
+  
+  .form-label {
+    color: #00ffff;
+  }
+  
+
+  /***fish eye from reset password****/
+  .eye-icon {
+    position: absolute;
+    top: 55%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #00ffff;
+    cursor: pointer;
+    z-index: 2;
+  }
+   /***nothing as follows***/
+
+
+
+   /********************** This is from dashboard Optional CSS for hover dropdown ************************************/
+
+   .dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+  }
+
+  /* Neon Button Glow */
+  .btn-neon {
+    color: #fff;
+    border: 2px solid #0ff;
+    background-color: transparent;
+    box-shadow: 0 0 10px #0ff, 0 0 40px rgb(99, 7, 117), 0 0 80px rgb(101, 5, 121);
+    transition: all 0.3s ease-in-out;
+    text-shadow: 0 0 5px #0ff;
+  }
+
+  .btn-neon:hover {
+    background-color: #0ff;
+    color: #000;
+    box-shadow: 0 0 20px rgb(218, 5, 147), 0 0 60px #0ff, 0 0 100px #0ff;
+    transform: scale(1.05);
+  }
+
+  /* Gradient Button */
+  .btn-gradient {
+    background: linear-gradient(135deg, #00feba, #5b5ea6);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0,255,234,0.4);
+    transition: all 0.3s ease;
+  }
+
+  .btn-gradient:hover {
+    box-shadow: 0 6px 30px rgba(0,255,234,0.6);
+    transform: translateY(-3px);
+  }
+
+  /* Glassmorphic Button */
+  .btn-glass {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .btn-glass:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: #000;
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.5);
+  }
+
+  #clock {
+    font-size: 1.0rem;
+    color: white;
+    font-weight: bold;
+    position: relative;
+    z-index: 9999;
+  }
+
+  /********************** XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX************************************/
