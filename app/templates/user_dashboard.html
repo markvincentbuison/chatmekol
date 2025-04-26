@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>User Dashboard</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}"/>
-    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}"/>
+    
     <style>
-      
         .main-content {
             margin-left: 250px;
             width: calc(100vw - 250px);
@@ -23,25 +22,42 @@
             overflow-y: auto;
             overflow-x: hidden;
         }
-
     </style>
 </head>
+
 <body>
+      <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+    
     <div class="dashboard-container">
         <div class="sidebar">
             <div class="sidebar-header">
-              <img src="{{ picture or 'https://lh3.googleusercontent.com/a/ACg8ocIsiYk5BypLbTs48boVA0DMv_emvqdfIHm7XwFaEA47YOKzvShrQg=s96-c' }}" alt="Profile Picture" class="profile-pic">
-              <div>{{ name }}{{ username }}</div>
+                <img src="{{ picture }}" alt="Profile Picture" class="profile-pic">
+                <div>{{ name }}{{ username }}</div>
                 <small>{{ email }}</small>
+                <div></div>
                 {% if is_verified %}
-        <span class="text-success">Your email is verified! 🎉</span>
-      {% else %}
-        <span class="text-danger">Your email is not verified.</span>
-       
-          <button  class="fas fa-envelope" data-bs-toggle="modal" data-bs-target="#verifyModal">Verify Email
-        
-      {% endif %}
+                    <span class="text-success">Your email is verified! 🎉</span>
+                {% else %}
+                    <span class="text-danger">Your email is not verified.</span><br>
+                    <button class="btn btn-sm btn-warning mt-2" data-toggle="modal" data-target="#verifyModal">
+                        <i class="fas fa-envelope"></i> Verify Email
+                    </button>
+                {% endif %}
             </div>
+
             <ul class="sidebar-menu">
                 <li onclick="showContent('home')"><i class="fas fa-home"></i> Home</li>
                 <li onclick="showContent('profile')"><i class="fas fa-user"></i> Profile</li>
@@ -56,6 +72,7 @@
                 <h2>Welcome, {{ name }}{{ username }}!</h2>
                 <p>This is your dashboard. Start interacting with your messages, profile, or explore more options from the sidebar.</p>
             </div>
+
             <div id="home" class="content-box">
                 <h3>Home</h3>
                 <p>Welcome to the home section!</p>
@@ -96,6 +113,33 @@
         </div>
     </div>
 
+    <!-- Modal for Email Verification -->
+    <div class="modal fade" id="verifyModal" tabindex="-1" role="dialog" aria-labelledby="verifyModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="verifyModalLabel">Verify Your Email</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    Are you sure you want to send the verification email to <strong>{{ email }}</strong>?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                
+                    <form method="POST" action="">
+                        <button type="submit" class="btn btn-primary">Send Verification</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script>
         function showContent(content) {
             const contentBoxes = document.querySelectorAll('.content-box');
@@ -109,6 +153,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <script>
         if (window.history && window.history.pushState) {
             window.history.pushState(null, "", window.location.href);
@@ -117,5 +162,10 @@
             };
         }
     </script>
+    <script>
+        setTimeout(function() {
+          $('.alert').alert('close');
+        }, 5000); // 5000ms = 5 seconds
+      </script>
 </body>
 </html>

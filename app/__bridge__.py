@@ -11,7 +11,7 @@ load_dotenv()
 #───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 def create_app():
     app = Flask(__name__)
-    
+    app.config['SECURITY_PASSWORD_SALT'] = 'your_unique_salt_value'
     app.secret_key = os.getenv("SECRET_KEY", "asdasdasdasdasdasd")  # Default value for development
     app.register_blueprint(routes)
     # Detect environment (set FLASK_ENV=development in .env if needed)
@@ -35,6 +35,20 @@ def create_app():
         )
     # Set session expiration time (ensure it's in the create_app function)
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
+            # Flask-Mail config using environment variables
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
+
+    app.config['UPLOAD_FOLDER'] = 'static/background/'
+    app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+    
+
+        # Initialize Flask-Mail
+    mail.init_app(app)
     #───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
     return app
