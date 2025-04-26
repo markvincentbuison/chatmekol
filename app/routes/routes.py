@@ -229,7 +229,7 @@ import re
 import mysql.connector
 from datetime import datetime, timedelta
 import logging
-
+import psycopg2.extras
 # =================================================================================================================
 def validate_username(username):
     if len(username) < 3 or len(username) > 11:
@@ -249,19 +249,21 @@ def send_verification_email_function(email, token):
 #==============Login=============================================================================================
 @routes.route('/login', methods=['POST'])
 def login():
-        # Prevent logged-in users from going back to login page
+    # Prevent logged-in users from going back to login page
     if 'user_id' in session:
         return redirect(url_for('routes.dashboardx'))  # Redirect to dashboard if already logged in
 
     username = request.form['username']
     password = request.form['password']
-    # Try creating a connection
-    conn = create_connection()
+
+    # Try creating a connection using get_db_connection
+    conn = get_db_connection()
     if conn is None:
         flash('Failed to connect to the database.', 'danger')
         return redirect(url_for('routes.index'))
+
     try:
-        cursor = conn.cursor()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cursor.execute("SELECT * FROM users WHERE username=%s", (username,))
         user = cursor.fetchone()
     except Exception as e:
@@ -271,6 +273,7 @@ def login():
     finally:
         if conn:
             conn.close()
+
     if user:
         try:
             stored_hash = user[2]  # Assuming 3rd column is password hash
@@ -298,13 +301,17 @@ def dashboardx():
     if 'user_id' not in session:
         flash('You need to login to access the system', 'warning')
         return redirect(url_for('routes.index'))
-    conn = create_connection()
-    cursor = conn.cursor()
+
+    # Use get_db_connection instead of create_connection
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
     # ✅ Fetch username, is_admin, and is_verified
     cursor.execute("SELECT username, is_admin, is_verified FROM users WHERE id=%s", (session['user_id'],))
     user = cursor.fetchone()
     cursor.close()
     conn.close()
+
     if user:
         username, is_admin, is_verified = user
         session['is_admin'] = is_admin
@@ -313,6 +320,7 @@ def dashboardx():
             return render_template('admin_dashboard.html', username=username, is_verified=is_verified)
         else:
             return render_template('user_dashboard.html', username=username, is_verified=is_verified)
+    
     flash('User not found. Please login again.', 'danger')
     return redirect(url_for('routes.logout'))
 #================Signup=========================================================================================
@@ -341,8 +349,8 @@ def signup():
         verification_token = generate_token()
         verification_expiry = datetime.utcnow() + timedelta(hours=1)
         
-        conn = create_connection()
-        cursor = conn.cursor()
+        conn = get_db_connection()  # Use get_db_connection instead of create_connection
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         
         # Check for existing username or email
         cursor.execute("SELECT * FROM users WHERE username=%s OR email_address=%s", (username, email_address))
@@ -350,7 +358,7 @@ def signup():
             flash('Username or Email already exists.', 'danger')
             return redirect(url_for('routes.index'))
         
-        cursor.execute("""
+        cursor.execute(""" 
             INSERT INTO users (username, password, email_address, verification_token, verification_token_expiry, is_verified)
             VALUES (%s, %s, %s, %s, %s, %s)
         """, (username, hashed_password, email_address, verification_token, verification_expiry, False))
@@ -367,12 +375,11 @@ def signup():
         if conn:
             conn.close()
     return redirect(url_for('routes.index'))
-
 #=============Verify email=========================================================================================
 @routes.route('/verify-email/<token>')
 def verify_email(token):
-    conn = create_connection()
-    cursor = conn.cursor()
+    conn = get_db_connection()  # Use get_db_connection instead of create_connection
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     try:
         cursor.execute("SELECT * FROM users WHERE verification_token=%s", (token,))
         user = cursor.fetchone()
@@ -395,16 +402,18 @@ def verify_email(token):
         cursor.close()
         conn.close()
     return redirect(url_for('routes.index'))
-
 #============================FORGOT PASSWORD========================================================================
+from app.routes.postgresql import get_db_connection  # Import the get_db_connection function
+
 @routes.route('/forgot-password', methods=['POST'])
 def forgot_password():
     email_address = request.form.get('forgot_email')
     if not email_address:
         flash('Please enter your email address.', 'warning')
         return redirect(url_for('routes.index'))
-    conn = create_connection()
-    cursor = conn.cursor()
+    
+    conn = get_db_connection()  # Use get_db_connection instead of create_connection
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     try:
         cursor.execute("SELECT * FROM users WHERE email_address=%s", (email_address,))
         user = cursor.fetchone()
@@ -428,6 +437,7 @@ def forgot_password():
     finally:
         cursor.close()
         conn.close()
+    
     return redirect(url_for('routes.index'))
 
 #========================USER RESET PASSWORD========================================================================
@@ -449,8 +459,8 @@ def reset_password(token):
 
     hashed_password = hash_password(new_password)
 
-    conn = create_connection()
-    cursor = conn.cursor()
+    conn = get_db_connection()  # Use get_db_connection instead of create_connection
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     try:
         cursor.execute("SELECT reset_token_expiry FROM users WHERE reset_token=%s", (token,))
         result = cursor.fetchone()
@@ -487,8 +497,8 @@ def send_verification_email_route_dashboard():
         flash('You need to be logged in to send verification email.', 'warning')
         return redirect(url_for('routes.index'))
 
-    conn = create_connection()
-    cursor = conn.cursor()
+    conn = get_db_connection()  # Use get_db_connection instead of create_connection
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     try:
         cursor.execute("SELECT email_address FROM users WHERE id=%s", (user_id,))
         user = cursor.fetchone()
