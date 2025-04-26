@@ -1,13 +1,16 @@
 from dotenv import load_dotenv
 from app.__bridge__ import create_app
-#from app import create_app
 import os
-# ✅ Load environment variables from .env if available
+
+from dotenv import load_dotenv
 load_dotenv()
 
+# Create the app
 app = create_app()
 
+
 if __name__ == "__main__":
+    
     # Check if we're in a production environment on Render
     if os.getenv('RENDER') is None:  # Not on Render, use SSL locally
         cert_path = os.path.join(os.getcwd(), 'certs', 'server.crt')
@@ -22,3 +25,4 @@ if __name__ == "__main__":
     else:  # On Render, don't use SSL manually
         print("Running on Render. Starting app without SSL.")
         app.run(debug=True, host='0.0.0.0', port=5000)
+#───────────────────────────────────────────────────────────────────────────────────────────────────────────────────S

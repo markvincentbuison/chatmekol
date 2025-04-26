@@ -30,7 +30,7 @@ def send_email(subject, body, recipient_email):
 def send_verification_email(email, token, username):
     """Sends a verification email to the user with a unique token."""
     subject = "Verify Your Email - TunNer"
-    verification_link = url_for('routes_new.verify_email', token=token, _external=True)
+    verification_link = url_for('routes.verify_email', token=token, _external=True)
     
     body = f"""
 Hi {username},
@@ -50,7 +50,7 @@ Cheers,
 # =============================================================================================================
 def send_reset_email(email, token, username):
     """Sends a password reset email with a reset token."""
-    reset_link = url_for('routes_new.reset_password', token=token, _external=True)
+    reset_link = url_for('routes.reset_password', token=token, _external=True)
     subject = "Password Reset Request"
     body = f"""Hi {username},
 

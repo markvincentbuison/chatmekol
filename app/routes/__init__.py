@@ -8,6 +8,11 @@ from app.utils import (generate_token, send_email,send_verification_email, send_
 import bcrypt
 import re
 import mysql.connector  # Add this import at the top of the file
+#=====================GOOGLE AUTH=======================
+from flask import Flask, redirect, url_for, session, flash
+from flask_dance.contrib.google import make_google_blueprint, google
+import mysql.connector
+from app.mysql_connect import create_connection  # Assuming you have this in mysql_connect.py
 # ============================================
 # Blueprint Functions
 # ============================================
@@ -15,7 +20,6 @@ routes = Blueprint('routes', __name__)
 # ============================================
 # Helper Functions
 # ============================================
-
 def validate_username(username):
     if len(username) < 3 or len(username) > 11:
         return "Username must be between 3 and 11 characters."
@@ -29,7 +33,7 @@ def hash_password(password):
 
 def send_verification_email_function(email, token):
     subject = "Email Verification"
-    verification_link = url_for('routes_new.verify_email', token=token, _external=True)
+    verification_link = url_for('routes.verify_email', token=token, _external=True)
     body = f"Please verify your email by clicking the following link: {verification_link}"
     send_email(subject, body, email)
 
@@ -55,15 +59,15 @@ def login():
     if user and bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8')):  # Assuming password is at index 2
         session['user_id'] = user[0]
         session['username'] = user[1]
-        return redirect(url_for('routes_new.dashboard'))
+        return redirect(url_for('routes.dashboard'))
     flash('Invalid credentials, please try again.', 'danger')
-    return redirect(url_for('routes_new.index'))
+    return redirect(url_for('routes.index'))
 
 @routes.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
         flash('You need to login to access the system', 'warning')
-        return redirect(url_for('routes_new.index'))
+        return redirect(url_for('routes.index'))
     conn = create_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT username, is_verified FROM users WHERE id=%s", (session['user_id'],))
@@ -73,14 +77,14 @@ def dashboard():
     if user:
         return render_template('dashboard.html', username=user[0], is_verified=user[1])
     flash('User not found. Please login again.', 'danger')
-    return redirect(url_for('routes_new.logout'))
+    return redirect(url_for('routes.logout'))
 
 @routes.route('/logout')
 def logout():
     session.pop('user_id', None)
     session.pop('username', None)
     flash('You have been logged out successfully.', 'info')
-    return redirect(url_for('routes_new.index'))
+    return redirect(url_for('routes.index'))
 
 # Signup route
 @routes.route('/signup', methods=['POST'])
@@ -92,20 +96,20 @@ def signup():
 
     if not email:
         flash('Email address is required.', 'danger')
-        return redirect(url_for('routes_new.index'))
+        return redirect(url_for('routes.index'))
     if (err := validate_username(username)):
         flash(err, 'danger')
-        return redirect(url_for('routes_new.index'))
+        return redirect(url_for('routes.index'))
     if password != confirmation_password:
         flash('Passwords do not match.', 'danger')
-        return redirect(url_for('routes_new.index'))
+        return redirect(url_for('routes.index'))
 
     hashed_password = hash_password(password)
     verification_token = generate_token()
 
     if not verification_token:
         flash('Failed to generate verification token.', 'danger')
-        return redirect(url_for('routes_new.index'))
+        return redirect(url_for('routes.index'))
 
     try:
         conn = create_connection()
@@ -114,7 +118,7 @@ def signup():
         cursor.execute("SELECT * FROM users WHERE username=%s OR email_address=%s", (username, email))
         if cursor.fetchone():
             flash('Username or Email already exists.', 'danger')
-            return redirect(url_for('routes_new.index'))
+            return redirect(url_for('routes.index'))
 
         cursor.execute("""
             INSERT INTO users (username, password, email_address, verification_token, is_verified)
@@ -132,7 +136,7 @@ def signup():
         cursor.close()
         conn.close()
 
-    return redirect(url_for('routes_new.index'))
+    return redirect(url_for('routes.index'))
 
 # Email verification route
 @routes.route('/verify-email/<token>')
@@ -153,7 +157,7 @@ def verify_email(token):
             cursor.execute("UPDATE users SET is_verified=1, verification_token=NULL WHERE verification_token=%s", (token,))
             conn.commit()
             flash("Email verified successfully.", 'success')
-            return redirect(url_for('routes_new.dashboard'))  # Redirect to dashboard or any page after successful verification
+            return redirect(url_for('routes.dashboard'))  # Redirect to dashboard or any page after successful verification
         else:
             print("Token not found or expired!")  # Debugging: Print error
             flash("Invalid or expired verification link.", 'danger')
@@ -166,7 +170,7 @@ def verify_email(token):
         cursor.close()
         conn.close()
 
-    return redirect(url_for('routes_new.index'))  # Redirect back to homepage if something went wrong
+    return redirect(url_for('routes.index'))  # Redirect back to homepage if something went wrong
 
 
 @routes.route('/forgot-password', methods=['POST'])
@@ -174,7 +178,7 @@ def forgot_password():
     email = request.form.get('forgot_email')
     if not email:
         flash('Please enter your email address.', 'warning')
-        return redirect(url_for('routes_new.index'))
+        return redirect(url_for('routes.index'))
 
     conn = create_connection()
     cursor = conn.cursor()
@@ -192,7 +196,7 @@ def forgot_password():
 
     cursor.close()
     conn.close()
-    return redirect(url_for('routes_new.index'))
+    return redirect(url_for('routes.index'))
 
 @routes.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
@@ -204,11 +208,11 @@ def reset_password(token):
 
     if not new_password or not confirm_password:
         flash("Please fill out both fields.", "danger")
-        return redirect(url_for('routes_new.reset_password', token=token))
+        return redirect(url_for('routes.reset_password', token=token))
 
     if new_password != confirm_password:
         flash("Passwords do not match.", "danger")
-        return redirect(url_for('routes_new.reset_password', token=token))
+        return redirect(url_for('routes.reset_password', token=token))
 
     hashed_password = hash_password(new_password)
 
@@ -236,14 +240,14 @@ def reset_password(token):
         cursor.close()
         conn.close()
 
-    return redirect(url_for('routes_new.index'))
+    return redirect(url_for('routes.index'))
 
 @routes.route('/send-verification-email', methods=['POST'])
 def send_verification_email_route_dashboard():
     user_id = session.get('user_id')
     if not user_id:
         flash('You need to be logged in to send verification email.', 'warning')
-        return redirect(url_for('route_new.index'))
+        return redirect(url_for('routes.index'))
 
     conn = create_connection()
     cursor = conn.cursor()
@@ -261,7 +265,4 @@ def send_verification_email_route_dashboard():
 
     cursor.close()
     conn.close()
-    return redirect(url_for('routes_new.dashboard'))
-
-
-
+    return redirect(url_for('routes.dashboard'))
