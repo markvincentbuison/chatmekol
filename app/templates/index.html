@@ -81,17 +81,13 @@
       </div>
 
       <!-- QR Code -->
-<div id="floating-qrcode">
-  <h6>Scan to Open</h6>
-  <div id="qrcode"></div>
-</div>
 
 
     </form>
   </div>
 
   <div id="signupTab" class="form-tab">
-    <form method="POST" action="{{ url_for('routes.signup') }}">
+      <form method="POST" action="{{ url_for('routes.signup') }}">
       <div class="form-floating mb-3">
         <input type="text" class="form-control" id="signupUser" name="username" placeholder="Username" required />
         <label for="signupUser"><i class="fas fa-user me-2"></i>Username</label>
@@ -157,16 +153,8 @@
 
 <script>
   // Generate QR code
-  const qrcode = new QRCode(document.getElementById("qrcode"), {
-    text: "https://chatmekol.onrender.com/",
-    width: 150,
-    height: 150,
-    colorDark : "#00ffff", 
-    colorLight : "#000000",
-    correctLevel : QRCode.CorrectLevel.H,
-    logo: "path/to/your/logo.png", // Add logo to center
-    logoSize: 1.0,  // 20% of the QR code size
-  });
+
+
 
   function switchTab(tabId) {
     document.querySelectorAll(".form-tab").forEach(tab => tab.classList.remove("active"));

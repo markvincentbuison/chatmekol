@@ -40,11 +40,12 @@
   {% endif %}
 {% endwith %}
 
+
     
     <div class="dashboard-container">
         <div class="sidebar">
             <div class="sidebar-header">
-                <img src="{{ picture }}" alt="Profile Picture" class="profile-pic">
+                <img src="{% if picture %}{{ picture }}{% else %}{{ url_for('static', filename=profile_picture) }}{% endif %}" alt="Profile Picture" class="profile-pic">
                 <div>{{ name }}{{ username }}</div>
                 <small>{{ email }}</small>
                 <div></div>
@@ -131,7 +132,10 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 
-                    <form method="POST" action="">
+                    {% if token %}
+                    <form method="POST" action="{{ url_for('routes.verify_email', token=token) }}">
+                    {% endif %}
+
                         <button type="submit" class="btn btn-primary">Send Verification</button>
                     </form>
                 </div>

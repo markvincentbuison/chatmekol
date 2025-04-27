@@ -77,3 +77,12 @@ html, body {
 .content-box.hidden {
     display: none;
 }
+/*********dashboard default profile picture**********************/
+.profile-pic {
+    width: 120px;          /* you can change size */
+    height: 120px;
+    border-radius: 50%;     /* makes it perfectly circular */
+    object-fit: cover;      /* crop the image nicely inside circle */
+    border: 3px solid #00f0ff; /* neon border color (optional) */
+    box-shadow: 0 0 15px #00f0ff, 0 0 30px #00f0ff; /* glowing neon effect */
+}

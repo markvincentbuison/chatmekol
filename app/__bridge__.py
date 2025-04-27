@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from app.routes.routes import routes  # ✅ Corrected import
 from datetime import timedelta
 from app.extensions.mail import mail
+from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
+from flask import Flask, g
 #───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 # Load environment variables from .env
 #───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -46,7 +48,14 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = 'static/background/'
     app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
     
+    # Set up the Flask-Dance Facebook blueprint
+    facebook_bp = make_facebook_blueprint(
+        client_id='your-facebook-client-id',
+        client_secret='your-facebook-client-secret',
+        redirect_to='routes.facebook_login_callback'  # Ensure this points to your callback route
+    )
 
+    
         # Initialize Flask-Mail
     mail.init_app(app)
     #───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
